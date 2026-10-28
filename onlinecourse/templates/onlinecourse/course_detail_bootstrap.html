@@ -51,6 +51,35 @@
                 {% endfor %}
             </div>
             <!-- Course detail template changes go here -->
+            {% if user.is_authenticated %}
+                <br>
+
+                <!-- Botón para comenzar el examen -->
+                <button class="btn btn-primary btn-block"
+                data-toggle="collapse"
+                data-target="#exam">
+                  Start Exam
+                </button>
+                
+                <!-- Sección del examen -->
+                <div id="exam" class="collapse">
+                  <form id="questionform"
+                        action="{% url 'onlinecourse:submit' course.id %}"
+                        method="POST">
+
+                {% csrf_token %}
+
+                {% for question in course.question_set.all %}
+                    {{ question.question_text}}
+
+                    {% for choice in question.choice_set.all %}
+                        {{ choice.choice_text }}
+                    {% endfor %}  
+
+                {% endfor %}
+                  </form>
+                </div>
+            {% endif %}
     </div>
 </body>
 </html>
