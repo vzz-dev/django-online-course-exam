@@ -61,23 +61,26 @@
                   Start Exam
                 </button>
                 
-                <!-- Sección del examen -->
+                                <!-- Sección del examen -->
                 <div id="exam" class="collapse">
-                  <form id="questionform"
-                        action="{% url 'onlinecourse:submit' course.id %}"
-                        method="POST">
+                    <form id="questionform"
+                          action="{% url 'onlinecourse:submit' course.id %}"
+                          method="POST">
 
-                {% csrf_token %}
+                        {% csrf_token %}
 
-                {% for question in course.question_set.all %}
-                    {{ question.question_text}}
+                        {% for question in course.question_set.all %}
+                            {{ question.question_text }}
 
-                    {% for choice in question.choice_set.all %}
-                        {{ choice.choice_text }}
-                    {% endfor %}  
+                            {% for choice in question.choice_set.all %}
+                                {{ choice.choice_text }}
+                            {% endfor %}
+                        {% endfor %}
 
-                {% endfor %}
-                  </form>
+                        <input class="btn btn-success btn-block"
+                               type="submit"
+                               value="Submit">
+                    </form>
                 </div>
             {% endif %}
     </div>
