@@ -1,10 +1,13 @@
-from django.urls import path
+from typing import cast
+
 from django.conf import settings
 from django.conf.urls.static import static
+from django.urls import URLPattern, path
+
 from . import views
 
 app_name = 'onlinecourse'
-urlpatterns = [
+urlpatterns = cast(list[URLPattern], [
     # route is a string contains a URL pattern
     # view refers to the view function
     # name the URL
@@ -18,7 +21,12 @@ urlpatterns = [
     path('<int:course_id>/enroll/', views.enroll, name='enroll'),
 
     # <HINT> Create a route for submit view
+    path('<int:course_id>/submit/', views.submit, name="submit"),
 
     # <HINT> Create a route for show_exam_result view
-
- ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+    path(
+        'course/<int:course_id>/submission/<int:submission_id>/result/',
+        views.show_exam_result,
+        name="show_exam_result"
+    ),
+ ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT))
