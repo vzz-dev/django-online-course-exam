@@ -162,23 +162,27 @@ def show_exam_result(request, course_id, submission_id):
     choices = submission.choices.all()
 
     total_score = 0
+    possible_score = 0
     questions = course.question_set.all()
 
     for question in questions:
-        
-        # Get all correct choices for the question
-        correct_choices = question.choice_set.filter(is_correct=True) 
+
         # Get the user's selected choices for the question
         selected_choices =  choices.filter(question=question)
 
-        # Check if the selected choices are the same as the correct choices
-        if set(correct_choices) == set(selected_choices):
+        selected_ids = list(
+            selected_choices.values_list("id", flat=True)
+        )
+
+        possible_score += question.score
+
+        if question.is_get_score(selected_ids):
             total_score += question.score
 
-    
     context['course'] = course
     context['total_score'] = total_score
     context['choices'] = choices
     context['questions'] = questions
+    context['possible_score'] = possible_score
 
     return render(request, "onlinecourse/exam_result_bootstrap.html", context)

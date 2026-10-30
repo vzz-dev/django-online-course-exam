@@ -128,17 +128,10 @@ class Question(models.Model):
 
     # method to calculate if the learner gets the score of the question
     def is_get_score(self, selected_ids: list[int]) -> bool:
-
-        all_answers = self.choice_set.filter(is_correct=True).count()
-        selected_correct = self.choice_set.filter(
-            is_correct=True,
-            id__in=selected_ids
-            ).count()
-
-        if all_answers == selected_correct:
-            return True
-        else:
-            return False
+        correct_ids = set(
+            self.choice_set.filter(is_correct=True).values_list("id", flat=True)
+        )
+        return correct_ids == set(selected_ids)
 
 # Choice model
 class Choice(models.Model):
@@ -146,9 +139,17 @@ class Choice(models.Model):
     choice_text: models.CharField[str, str] = models.CharField(max_length=200)
     is_correct: models.BooleanField[bool, bool] = models.BooleanField(default=False)
 
+    @override
+    def __str__(self):
+        return self.choice_text
+
 # One enrollment could have multiple submission
 # One submission could have multiple choices
 # One choice could belong to multiple submissions
 class Submission(models.Model):
    enrollment: models.ForeignKey[Enrollment, Enrollment] = models.ForeignKey(Enrollment, on_delete=models.CASCADE)
    choices: models.ManyToManyField[Choice, models.Model] = models.ManyToManyField(Choice)
+
+   @override
+   def __str__(self):
+       return f"Submission {self.pk}"
